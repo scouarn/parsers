@@ -73,4 +73,35 @@ let parse_all_of = assos epsilon (<*>);;
 
 let parse_any_chars l =	parse_any_of (map parse_char l);;
 let parse_all_chars l =	parse_all_of (map parse_char l);;
+
 let parse_string s = parse_all_chars (string_to_list s);;
+let parse_any_from_string s = parse_any_chars (string_to_list s);;
+
+let digit = parse_any_from_string "0123456789";;
+let parse_int   = plus digit;;
+let parse_float = parse_int <*> (parse_char '.') <*> parse_int;;
+
+let letter_lower = parse_any_from_string "abcdefghijklmnopqrstuvwxyz";;
+let letter_upper = parse_any_from_string "ABCDEFGHIJKLMNOPQRSTUVWXYZ";;
+let letter = letter_upper <|> letter_lower;;
+
+let identifier = plus (letter <|> digit);;
+
+let sspace = star (parse_char ' ');;
+
+let padded p = sspace <*> p <*> sspace;;
+
+let token_plus = padded (parse_char '+');;
+let token_mult = padded (parse_char '*');;
+let token_lpar = padded (parse_char '(');;
+let token_rpar = padded (parse_char ')');;
+
+(* To be defined via rec *)
+let sum = parse_int <*> token_plus <*> parse_int;;
+let prod = sum <*> token_mult <*> sum;;
+let expr = prod <*> token_plus <*> prod;;
+
+
+
+
+
