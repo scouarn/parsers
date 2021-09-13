@@ -1,17 +1,15 @@
-(* Utils *)
+(* Apply f to every element *)
 let rec map f = function 
 	| [] -> []
 	| h::t -> (f h)::(map f t)
 ;;
 
+(* Apply x1 + x2 + x3... (+ = f) *)
 let rec assos el_neutre f = function
 	| [] -> el_neutre
-	| h::[] -> h
-	| h::t  -> f h (assos f t)
-
-	in aux l
+	| h::[] -> h (* useful case ?*)
+	| h::t  -> f h (assos el_neutre f t)
 ;;
-
 
 
 (* string -> char list *)
@@ -35,8 +33,6 @@ type regex = (char, char) parser;;
 let epsilon : regex = function
 	| input -> input, [None]
 ;;
-
-
 
 (* The first if successful, OR the second *)
 let (<|>) (p1 : regex) (p2 : regex) : regex = fun input ->
@@ -72,12 +68,9 @@ let parse_char (c : char) : regex = function
 	| input -> input, [] 
 ;;
 
-let parse_string (str : string) : regex = 
+let parse_any_of = assos epsilon (<|>);;
+let parse_all_of = assos epsilon (<*>);; 
 
-	let rec aux = function
-		| c::[] -> parse_char c
-		| c::l  -> parse_char c <*> aux l
-		| _ -> epsilon
-
-	in aux (string_to_list str)
-;;
+let parse_any_chars l =	parse_any_of (map parse_char l);;
+let parse_all_chars l =	parse_all_of (map parse_char l);;
+let parse_string s = parse_all_chars (string_to_list s);;
