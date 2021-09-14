@@ -6,7 +6,7 @@
  * a single word input (a list of symbols)
  * and produces a list of what it found. 
  *)
-type ('a, 'b) parser = 'a list -> 'a list * 'b list;;
+type ('a, 'b) parser = 'a -> 'a * 'b list;;
 
 
 let canon e : ('a, 'b) parser = function

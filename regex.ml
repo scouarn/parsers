@@ -3,7 +3,7 @@
  * lists of chars, where the empty list [] is the empty word empsilon or "".
  *)
 
-type regex = (char, char list) parser;;
+type regex = (char list, char list) parser;;
 
 (* Versions with explicite regex type *)
 let parse_char : char->regex = canon;;

@@ -3,37 +3,36 @@
 
 type tok = Litt of int
 		 | Var  of string
-		 | Plus | Mult | LPar | RPar
 		 | Expr of tok list 
 		 | Term of tok list 
 		 | Fact of tok list
 
-type expr_parser = (char, tok list) parser;;
+type expr_parser = (char list, tok list) parser;;
 
 
 let token_litt : expr_parser = fun input -> 
 	match parse_int input with 
 		| rem, h::t -> rem, [[Litt(int_of_charlist h)]]
-		| rem, []   -> rem, []
+		| rem, []	   -> rem, []
 ;;
 
 let token_plus : expr_parser = function
-	| h::t when h = '+' -> t, [[Plus]]
+	| h::t when h = '+' -> t, [[]]
 	| input -> input, []
 ;;
 
 let token_mult : expr_parser = function
-	| h::t when h = '*' -> t, [[Mult]]
+	| h::t when h = '*' -> t, [[]]
 	| input -> input, []
 ;;
 
 let token_lpar : expr_parser = function
-	| h::t when h = '(' -> t, [[LPar]]
+	| h::t when h = '(' -> t, [[]]
 	| input -> input, []
 ;;
 
 let token_rpar : expr_parser = function
-	| h::t when h = ')' -> t, [[RPar]]
+	| h::t when h = ')' -> t, [[]]
 	| input -> input, []
 ;;
 
@@ -47,19 +46,26 @@ let token_rpar : expr_parser = function
  *)
 
 let rec expr input = 
-		match ((term <*> token_plus <*> term)) input with
+		match ((term <*> token_plus <*> term) <|> term) input with
 			| rem, [] -> rem, []
 			| rem, res -> rem, [[Expr(flatten res)]]
-
-	and fact input = 
-		match (token_litt <|> (token_lpar <*> expr <*> token_rpar)) input with
-			| rem, [] -> rem, []
-			| rem, res -> rem, [[Fact(flatten res)]]
 
 	and term input = 
 		match ((fact <*> token_mult <*> fact) <|> fact) input with
 			| rem, [] -> rem, []
 			| rem, res -> rem, [[Term(flatten res)]]
 
+	and fact input = 
+		match ((token_lpar <*> expr <*> token_rpar) <|> token_litt) input with
+			| rem, [] -> rem, []
+			| rem, res -> rem, [[Fact(flatten res)]]
 
+
+;;
+
+
+let rec evaluate = function 
+	| Expr(e) -> 0
+	| Term(e) -> 1
+	| Fact(e) -> 2
 ;;
