@@ -55,4 +55,7 @@ let rec string_of_list : char list -> string = function
 		| h::t -> (String.make 1 h) ^ (string_of_list t);
 ;;
 
-let int_of_charlist l : int = int_of_string (string_of_list l);;
+let int_of_charlist l : int = match string_of_list l with
+	| ""  -> 0
+	| s   -> int_of_string s
+;;
