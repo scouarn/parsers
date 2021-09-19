@@ -44,18 +44,17 @@ let (<*>) p1 p2 : ('a, 'b) parser = fun input ->
 ;;
 
 
-
+(* One or more *)
 let rec plus p : ('a, 'b) parser = fun input ->
-	(* One or more *)
 	((p <*> plus p) <|> p) input	
 ;;  (* BUG ? Does not work without applying input : infinite recursion *)
 
+(* One or zero *)
+let question p : ('a, 'b) parser = p <|> empty;;
 
-let star p : ('a, 'b) parser = 
-	(* Zero or more *) 
-	plus p <|> empty
-;;
-
+(* Zero or more *) 
+let star p : ('a, 'b) parser = question (plus p);;
+	
 
 
 (* PARSER UTILITIES *)
@@ -66,9 +65,25 @@ let clump p : ('a, 'b) parser = fun input ->
 	rem, [flatten res]
 ;;
 
+
+let leave_out p : ('a, 'b) parser = fun input ->
+	let rem, res = p input in
+	if res = [] then rem, [] else rem, [[]]
+;;
+
+let keep_in p : ('a, 'b) parser = fun input ->
+	let rem, res = p input in
+	input, res
+;;
+
+(* FOLD-RIGHT ? *)
 (* create parsers with lists *)
 let parse_any_of = assos empty (<|>);;
 let parse_all_of = assos empty (<*>);; 
 
+(* 
+let parse_any_of plist = fun input -> (List.fold_right (<|>) plist empty) input;;
+let parse_all_of plist = fun input -> (List.fold_right (<*>) plist empty) input;; 
+ *)
 
 

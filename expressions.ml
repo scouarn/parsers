@@ -10,22 +10,23 @@ type expr_parser = (char list, tok list) parser;;
 
 
 (* Automate parsing with input type different from output  *)
-let bridge p func : expr_parser = fun input -> 
+let transform p func : expr_parser = fun input -> 
 	match p input with 
 		| rem, []	   -> rem, []
 		| rem, res -> rem, [func res]
 ;;
 
 
+
 (* h::t = [['1';'2';'3';...]] *)
-let token_litt = bridge parse_int (function h::t -> [Litt (int_of_charlist h)] | _ -> []);;
+let token_litt = transform parse_int (function h::t -> [Litt (int_of_charlist h)] | _ -> []);;
 
 (* Return [] because these tokens appear implicitly in the tree 
  * [] disappear with list flattening later *)
-let token_plus = bridge (parse_char '+') (fun x -> []);;
-let token_mult = bridge (parse_char '*') (fun x -> []);;
-let token_lpar = bridge (parse_char '(') (fun x -> []);;
-let token_rpar = bridge (parse_char ')') (fun x -> []);;
+let token_plus = leave_out (parse_char '+');;
+let token_mult = leave_out (parse_char '*');;
+let token_lpar = leave_out (parse_char '(');;
+let token_rpar = leave_out (parse_char ')');;
 
 
 (*  Defined recursively
@@ -34,15 +35,15 @@ let token_rpar = bridge (parse_char ')') (fun x -> []);;
  *	fact := [0..9]+ | '(' expr ')'
  *)
 let rec expr input = 
-		(bridge (term <*> star (token_plus <*> term))
+		(transform (term <*> star (token_plus <*> term))
 	 	 (fun x -> [Expr(flatten x)])  ) input
 
 	and term input = 
-		(bridge ((fact <*> star (token_mult <*> fact))) 
+		(transform ((fact <*> star (token_mult <*> fact))) 
 		 (fun x -> [Term(flatten x)])  ) input
 
 	and fact input = 
-		(bridge ((token_lpar <*> expr <*> token_rpar) <|> token_litt)
+		(transform ((token_lpar <*> expr <*> token_rpar) <|> token_litt)
 		 (fun x -> [Fact(flatten x)]) ) input
 ;;
 
@@ -61,6 +62,6 @@ let rec eval = function
 
 let eval_str str = 
 	match expr (string_to_list str) with
-	| [], (h::s)::t -> eval h
+	| [], (h::t)::u -> eval h
 	| _ -> failwith "Couldn't evaluate expression, this is not a valid expression."
 ;;
