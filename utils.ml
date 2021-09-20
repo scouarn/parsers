@@ -10,12 +10,17 @@ let rec map f = function
 ;;
 
 
+(* Fold right (or left ??) with special case /!\ *)
 let rec assos neutral f = function
 	(* Apply x1 + x2 + x3... (+ = f) *)
 	| [] -> neutral
 	| h::[] -> h (* useful case ?*)
 	| h::t  -> f h (assos neutral f t)
 ;;
+
+
+
+
 
 let rec (@) l m = match l with
 	(* Concat *)
