@@ -1,5 +1,6 @@
 #use "utils.ml"
 #use "parsers.ml"
-#use "regex.ml"
+
+#use "basic_parsers.ml"
 #use "expressions.ml"
 #use "date.ml"

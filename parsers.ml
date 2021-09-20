@@ -6,19 +6,19 @@
  * a single word input (a list of symbols)
  * and produces a list of what it found. 
  *)
-type ('a, 'b) parser = 'a -> 'a * 'b list;;
+type ('a, 'b) parser = 'a list -> 'a list * 'b list maybe;;
 
 
 let canon e : ('a, 'b) parser = function
 	(* Create canonical parser from an element *)
-	| h::t when h = e -> t, [[h]]
-	| input -> input, [] 
+	| h::t when h = e -> t, Just [h]
+	| input -> input, None 
 ;;
 
 
 let empty : ('a, 'b) parser = fun
 	(* Parse empty; it can always be found as prefix of anything *)
-	input -> input, [[]]
+	input -> input, Just []
 ;;
 
 
@@ -28,7 +28,7 @@ let empty : ('a, 'b) parser = fun
 let (<|>) p1 p2 : ('a, 'b) parser = fun input ->
 	(* The first (if successful), OR the second *)
 	match p1 input with
-	| rem, [] -> p2 input
+	| rem, None -> p2 input
 	| x -> x
 ;;
 
@@ -36,11 +36,11 @@ let (<|>) p1 p2 : ('a, 'b) parser = fun input ->
 let (<*>) p1 p2 : ('a, 'b) parser = fun input ->
 	(* The first AND the second *)
 	match p1 input with 
-	| rem, [] -> input, []
-	| rem1, res1 -> 
+	| rem, None -> input, None
+	| rem1, Just res1 -> 
 		match p2 rem1 with
-		| rem2, [] -> input, []
-		| rem2, res2 -> rem2, res1 @ res2
+		| rem2, None -> input, None
+		| rem2, Just res2 -> rem2, Just(res1 @ res2)
 ;;
 
 
@@ -59,25 +59,21 @@ let star p : ('a, 'b) parser = question (plus p);;
 
 (* PARSER UTILITIES *)
 
-let clump p : ('a, 'b) parser = fun input ->
-	(* Utility function to regroup elements of output list *)
-	let rem, res  =  p input in
-	rem, [flatten res]
-;;
-
 
 let leave_out p : ('a, 'b) parser = fun input ->
+	(* Always puts Just [] and forget the result *)
 	let rem, res = p input in
-	if res = [] then rem, [] else rem, [[]]
+	if res = None then rem, None else rem, Just []
 ;;
 
 let keep_in p : ('a, 'b) parser = fun input ->
+	(* Always puts back the input and do not 'eat' the element *)
 	let rem, res = p input in
 	input, res
 ;;
 
 (* FOLD-RIGHT ? *)
-(* create parsers with lists *)
+(* create parsers from lists of parsers *)
 let parse_any_of = assos empty (<|>);;
 let parse_all_of = assos empty (<*>);; 
 
@@ -87,3 +83,18 @@ let parse_all_of plist = fun input -> (List.fold_right (<*>) plist empty) input;
  *)
 
 
+(* Automate parsing with input type different from output  *)
+let transform p func : ('a, 'b) parser = fun input -> 
+	match p input with 
+		| rem, None -> rem, None
+		| rem, Just res -> rem, Just (func res)
+;;
+
+
+let is_valid p = fun input ->
+	let rem, res = p input in 
+	rem = [] && res != None
+;;
+
+
+let app_to_str func str = func (string_to_list str);;
