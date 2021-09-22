@@ -1,0 +1,28 @@
+\babel@toc {french}{}
+\contentsline {chapter}{Introduction}{2}{}%
+\contentsline {chapter}{\numberline {1}Architecture}{3}{}%
+\contentsline {section}{\numberline {1.1}Philosophie}{3}{}%
+\contentsline {section}{\numberline {1.2}Schéma général}{3}{}%
+\contentsline {section}{\numberline {1.3}Instructions et encodage}{3}{}%
+\contentsline {section}{\numberline {1.4}Exécution et flux des données}{3}{}%
+\contentsline {section}{\numberline {1.5}Extensions éventuelles}{3}{}%
+\contentsline {chapter}{\numberline {2}Émulation}{4}{}%
+\contentsline {section}{\numberline {2.1}Le module REG}{4}{}%
+\contentsline {section}{\numberline {2.2}Le module CPU}{4}{}%
+\contentsline {section}{\numberline {2.3}Exécution}{4}{}%
+\contentsline {chapter}{\numberline {3}Programmation}{5}{}%
+\contentsline {section}{\numberline {3.1}Le module ASM}{5}{}%
+\contentsline {section}{\numberline {3.2}Grammaire de l'assembleur}{5}{}%
+\contentsline {section}{\numberline {3.3}Directives de l'assembleur}{5}{}%
+\contentsline {section}{\numberline {3.4}Fonctionnement du compilateur}{5}{}%
+\contentsline {section}{\numberline {3.5}Le module BNF}{5}{}%
+\contentsline {section}{\numberline {3.6}Un langage de haut niveau}{5}{}%
+\contentsline {chapter}{\numberline {4}Simulation}{6}{}%
+\contentsline {section}{\numberline {4.1}Le module LOG}{6}{}%
+\contentsline {section}{\numberline {4.2}Implémentation logique}{6}{}%
+\contentsline {section}{\numberline {4.3}Le module ELOG}{6}{}%
+\contentsline {section}{\numberline {4.4}Simulation électronique}{6}{}%
+\contentsline {chapter}{\numberline {5}Implémentation Électronique}{7}{}%
+\contentsline {section}{\numberline {5.1}Portes logiques et transistors}{7}{}%
+\contentsline {chapter}{Conclusion}{8}{}%
+\contentsline {chapter}{Bibliographie}{9}{}%
