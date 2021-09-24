@@ -21,6 +21,14 @@ let empty : ('a, 'b) parser = fun
 	input -> input, Just []
 ;;
 
+let any : ('a, 'b) parser = function
+	(* Parse any; it can always be found *)
+
+	| [] -> [], None
+	| h::t -> t, Just h
+;;
+
+
 
 (* PARSER OPERATIONS *)
 
