@@ -5,7 +5,6 @@ type tok = Litt of int
 		 | Expr of tok list 
 		 | Term of tok list
 		 | Fact of tok
-		 | Var  of string
 
 type expr_parser = (char, tok) parser;;
 
@@ -17,29 +16,25 @@ let token_mult = leave_out (parse_char '*');;
 let token_lpar = leave_out (parse_char '(');;
 let token_rpar = leave_out (parse_char ')');;
 
-let token_litt = transform parse_int 
+let token_litt = transform (plus decimal) 
 	(fun x -> [Litt (int_of_charlist x)]);;
-
-let token_var  = transform identifier 
-	(fun x -> [Var (string_of_list x)]);;
-
 
 
 (*  Defined recursively
  *	expr := term ('+' term)*
  *	term := fact ('*' fact)*
- *	fact := [0..9]+ | '(' expr ')'
+ *	fact := [0-9]+ | '(' expr ')'
  *)
 let rec expr input = 
 		(transform (term <*> star (token_plus <*> term))
 	 	(fun x -> [Expr x])  ) input
 
 	and term input = 
-		(transform ((fact <*> star (token_mult <*> fact)))
+		(transform ((fact <*> star (token_mult <*> fact))) 
 		(fun x -> [Term x])  ) input
 
 	and fact input = 
-		(transform ((token_lpar <*> expr <*> token_rpar) <|> token_litt <|> token_var)
+		(transform ((token_lpar <*> expr <*> token_rpar) <|> token_litt)
 		(function [token] -> [Fact token] | _ -> [])  ) input
 ;;
 
@@ -64,11 +59,8 @@ let eval_str str =
 ;;
 
 
-
-
 (* Parse expression with variables
- * and reduce it with known constants ?
- * revise the tree structure -> no list *)
+ * and reduce it with known constants ? *)
 
 
 
