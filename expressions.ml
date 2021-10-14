@@ -6,15 +6,13 @@ type tok = Litt of int
 		 | Term of tok list
 		 | Fact of tok
 
-type expr_parser = (char, tok) parser;;
-
 
 (* Leave out because these tokens appear implicitly in 
  * the tree structure *)
-let token_plus = leave_out (parse_char '+');;
-let token_mult = leave_out (parse_char '*');;
-let token_lpar = leave_out (parse_char '(');;
-let token_rpar = leave_out (parse_char ')');;
+let token_plus = leave_out (canon '+');;
+let token_mult = leave_out (canon '*');;
+let token_lpar = leave_out (canon '(');;
+let token_rpar = leave_out (canon ')');;
 
 let token_litt = transform (plus decimal) 
 	(fun x -> [Litt (int_of_charlist x)]);;

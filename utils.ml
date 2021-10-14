@@ -1,13 +1,9 @@
 
-(* Useful monad *)
 type 'a maybe = None | Just of 'a;;
 
 
-let rec map f = function 
-	(* Apply f to every element *)
-	| [] -> []
-	| h::t -> (f h)::(map f t)
-;;
+let map = List.map;;
+let len = List.length;;
 
 
 (* Fold right (or left ??) with special case /!\ *)
@@ -20,16 +16,6 @@ let rec assos neutral f = function
 
 
 
-
-
-let rec (@) l m = match l with
-	(* Concat *)
-	| [] -> m
-	| h::t -> h::(t @ m)
-;;
-
-
-
 let rec flatten = function 
 	(* From list of lists to single list removes a single "level" *)
 	| [] -> []
@@ -37,11 +23,6 @@ let rec flatten = function
 ;;
 
 
-let rec len = function
-	(* Length of list; O(n) *)
-	| [] -> 0
-	| h::t -> 1 + len t
-;;
 
 
 let string_to_list str = 

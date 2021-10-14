@@ -2,12 +2,12 @@
 (* Time in HH:MM:SS 24h format 
  * Where HH <= 23, MM <= 59, SS <= 60 *)
 let parse_time =
-	let sep = parse_char ':'
-	and two  = parse_char '2'
-	and p0_9 = parse_any_chars ['0';'1';'2';'3';'4';'5';'6';'7';'8';'9']
-	and p0_5 = parse_any_chars ['0';'1';'2';'3';'4';'5']
-	and p0_3 = parse_any_chars ['0';'1';'2';'3']
-	and p0_1 = parse_any_chars ['0';'1']
+	let sep  = canon ':'
+	and two  = canon '2'
+	and p0_9 = parse_any_str "0123456789"
+	and p0_5 = parse_any_str "012345"
+	and p0_3 = parse_any_str "0123"
+	and p0_1 = parse_any_str "01"
 	in 
 
 	((p0_1 <*> p0_9) <|> (two <*> p0_3)) (* Hours *)
@@ -19,8 +19,8 @@ let parse_time =
 (* Year in YYYY-MM-DD format *)
 (* ACCEPTS INVALID DATES *)
 let parse_date =
-	let sep = parse_char '-'
-	and p0_9 = parse_any_chars ['0';'1';'2';'3';'4';'5';'6';'7';'8';'9']
+	let sep = canon '-'
+	and p0_9 = parse_any_str "0123456789"
 	in 
 
 	p0_9 <*> p0_9 <*> p0_9 <*> p0_9 (* Year *)
@@ -38,19 +38,16 @@ let parse_date =
 type time_t = {hour : int; min   : int; sec : int};;
 type date_t = {year : int; month : int; day : int};;
 
-type time_p = (char, time_t) parser;;
-type date_p = (char, date_t) parser;;
-
 
 (* Time in HH:MM:SS 24h format 
  * Where HH <= 23, MM <= 59, SS <= 60 *)
-let parse_time_v2 : time_p =
-	let sep = leave_out (parse_char ':')
-	and two  = parse_char '2'
-	and p0_9 = parse_any_chars ['0';'1';'2';'3';'4';'5';'6';'7';'8';'9']
-	and p0_5 = parse_any_chars ['0';'1';'2';'3';'4';'5']
-	and p0_3 = parse_any_chars ['0';'1';'2';'3']
-	and p0_1 = parse_any_chars ['0';'1']
+let parse_time_v2 =
+	let sep = leave_out (canon ':')
+	and two  = canon '2'
+	and p0_9 = parse_any_str "0123456789"
+	and p0_5 = parse_any_str "012345"
+	and p0_3 = parse_any_str "0123"
+	and p0_1 = parse_any_str "01"
 	
 	in 
 
@@ -72,9 +69,9 @@ let parse_time_v2 : time_p =
 
 (* Year in YYYY-MM-DD format *)
 (* ACCEPTS INVALID DATES *)
-let parse_date_v2 : date_p =
-	let sep = leave_out (parse_char '-')
-	and p0_9 = parse_any_chars ['0';'1';'2';'3';'4';'5';'6';'7';'8';'9']
+let parse_date_v2 =
+	let sep = leave_out (canon '-')
+	and p0_9 = parse_any_str "0123456789"
 	in 
 	
 	
